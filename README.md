@@ -1,12 +1,12 @@
-# Sunflower Canvas Animation
+# Sunflower Website 🌻
 
-A self-contained HTML5 Canvas animation generated from the traced sunflower artwork.
+GitHub Pages-ready sunflower animation with a custom music player.
 
-## Deploy with GitHub Pages
-1. Create a GitHub repository.
-2. Upload `index.html` to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select `main` and `/ (root)`, then save.
+## Files
+- `index.html` — animation + player
+- `music/sunflower.mp3` — local audio asset
 
-The Python generator is not required at runtime; `index.html` contains the artwork data and animation code.
+## GitHub Pages
+Upload the files preserving the `music/sunflower.mp3` path, then enable Settings → Pages → Deploy from a branch → main → /(root).
+
+Note: the included audio is a user-provided copyrighted recording. Make sure you have the necessary rights/permission before publishing it publicly.

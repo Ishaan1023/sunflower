@@ -8,34 +8,72 @@
   body{display:flex;align-items:center;justify-content:center;position:relative}
   canvas{display:block;width:min(92vw,92vh,800px);height:min(92vw,92vh,800px);max-width:none;max-height:none}
   #musicPlayer{
-    position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));
-    transform:translateX(-50%);width:min(390px,calc(100vw - 28px));z-index:100;
-    padding:11px 13px 10px;border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;background:rgba(15,15,15,.78);
-    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-    color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
-    box-sizing:border-box;box-shadow:0 10px 40px rgba(0,0,0,.45);
+    position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));
+    width:52px;height:52px;z-index:9999;box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.2);border-radius:50%;
+    background:rgba(10,10,10,.68);backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+    box-shadow:0 8px 28px rgba(0,0,0,.42);
+    overflow:hidden;transition:width .4s cubic-bezier(.2,.8,.2,1),
+    height .4s,border-radius .4s,background .3s;
   }
-  #musicTop{display:flex;align-items:center;gap:10px}
-  #musicIcon{width:30px;height:30px;display:grid;place-items:center;font-size:22px;flex:none}
-  #musicInfo{flex:1;min-width:0}
-  #musicTitle{font-size:13px;font-weight:650;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #musicArtist{font-size:10px;opacity:.58;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #musicPlay{
-    width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#111;
-    font-size:14px;cursor:pointer;display:grid;place-items:center;flex:none;
+  #musicPlayer.expanded{
+    width:min(300px,calc(100vw - 28px));height:112px;border-radius:20px;
+    background:rgba(12,12,12,.86);
   }
-  #musicProgress{display:block;width:100%;height:18px;margin:6px 0 0;accent-color:#fff}
-  #musicTime{display:flex;justify-content:space-between;font-size:9px;opacity:.48;margin-top:-1px}
-  @media (max-width:600px){
-    canvas{width:92vw;height:92vw}
-    #musicPlayer{bottom:max(12px,env(safe-area-inset-bottom));width:calc(100vw - 24px);padding:10px 11px 8px;border-radius:16px}
-    #musicPlay{width:42px;height:42px}
-    #musicProgress{margin-top:4px}
+  #musicTop{height:52px;display:flex;align-items:center;gap:8px;padding:0 6px}
+  #musicIcon{width:40px;height:40px;display:grid;place-items:center;
+    font-size:22px;flex:none;border-radius:50%;position:relative}
+  #musicInfo{flex:1;min-width:0;opacity:0;transform:translateX(8px);
+    transition:opacity .2s,transform .35s}
+  #musicPlayer.expanded #musicInfo{opacity:1;transform:none}
+  #musicTitle{font-size:12px;font-weight:650;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #musicArtist{font-size:9px;opacity:.55;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #musicPlay{width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#111;
+    font-size:12px;cursor:pointer;display:grid;place-items:center;flex:none}
+  #musicProgress{display:block;width:calc(100% - 22px);height:16px;margin:1px 11px 0;
+    accent-color:#fff;opacity:0;pointer-events:none}
+  #musicPlayer.expanded #musicProgress{opacity:1;pointer-events:auto}
+  #musicTime{display:flex;justify-content:space-between;font-size:8px;opacity:0;
+    margin:0 12px;transition:opacity .2s}
+  #musicPlayer.expanded #musicTime{opacity:.45}
+  #musicPlayer.playing #musicIcon{animation:musicPulse 1.6s ease-in-out infinite}
+  #musicPlayer.playing #musicIcon:after{
+    content:"";position:absolute;inset:2px;border:1px solid rgba(255,255,255,.28);
+    border-radius:50%;animation:musicRing 1.6s ease-out infinite
   }
-  @media (max-height:700px) and (orientation:landscape){
-    canvas{width:72vh;height:72vh}
-    #musicPlayer{width:330px;bottom:10px}
+  @keyframes musicPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+  @keyframes musicRing{0%{transform:scale(.8);opacity:.7}100%{transform:scale(1.45);opacity:0}}
+  @media(max-width:600px){
+    #musicPlayer{right:12px;bottom:max(12px,env(safe-area-inset-bottom));width:50px;height:50px}
+    #musicTop{height:50px}
+    #musicPlayer.expanded{width:calc(100vw - 24px);height:110px}
+  }
+  @media(max-height:700px) and (orientation:landscape){
+    #musicPlayer{right:12px;bottom:12px}
+  }
+
+  #musicPlayer:not(.expanded)::before{
+    content:"";position:absolute;inset:-1px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.16);opacity:0;
+    animation:orbShimmer 3.8s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes orbShimmer{
+    0%,62%,100%{opacity:0;transform:scale(.92)}
+    72%{opacity:.75;transform:scale(1.02)}
+    82%{opacity:0;transform:scale(1.16)}
+  }
+  #musicPlayer:not(.expanded)::after{
+    content:"♪";position:absolute;right:-2px;top:-7px;
+    font-size:11px;opacity:0;animation:noteFloat 4.6s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes noteFloat{
+    0%,68%,100%{opacity:0;transform:translate(0,5px) rotate(-8deg)}
+    76%{opacity:.7}
+    88%{opacity:0;transform:translate(5px,-9px) rotate(8deg)}
   }
 </style>
 </head>
@@ -46,8 +84,8 @@
   <div id="musicTop">
     <div id="musicIcon">🌻</div>
     <div id="musicInfo">
-      <div id="musicTitle">Sunflower</div>
-      <div id="musicArtist">Post Malone &amp; Swae Lee</div>
+      <div id="musicTitle">for the moment</div>
+      <div id="musicArtist">Sunflower · Post Malone &amp; Swae Lee</div>
     </div>
     <button id="musicPlay" aria-label="Play music">▶</button>
   </div>
@@ -116,7 +154,6 @@
   // The first tap/click anywhere on the page starts audio if autoplay was blocked.
   const unlock = () => {
     if (audio.paused) startMusic();
-    expandPlayer();
     window.removeEventListener('pointerdown', unlock);
     window.removeEventListener('touchstart', unlock);
   };

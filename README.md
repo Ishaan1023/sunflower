@@ -1,12 +1,11 @@
-# Sunflower Website 🌻
+# Sunflower — for the moment 🌻
 
-GitHub Pages-ready sunflower animation with a custom music player.
+A responsive sunflower animation with a subtle, edge-docked music interaction.
 
-## Files
-- `index.html` — animation + player
-- `music/sunflower.mp3` — local audio asset
+The initial control is a small animated sunflower orb that stays away from the artwork. Tapping it expands the player and reveals the phrase “for the moment”.
 
-## GitHub Pages
-Upload the files preserving the `music/sunflower.mp3` path, then enable Settings → Pages → Deploy from a branch → main → /(root).
+Keep `index.html` at the repository root and `sunflower.mp3` at `music/sunflower.mp3`.
 
-Note: the included audio is a user-provided copyrighted recording. Make sure you have the necessary rights/permission before publishing it publicly.
+Audible autoplay is attempted; mobile browsers may require the first user interaction to unlock sound.
+
+The included audio is a user-provided copyrighted recording; obtain the necessary rights/permission before publicly distributing it.

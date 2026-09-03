@@ -42,7 +42,7 @@
 <body>
 <canvas id="c" width="800" height="800"></canvas>
 
-<div id="musicPlayer" aria-label="Sunflower music player">
+<div id="musicPlayer" aria-label="Sunflower music player" title="Music">
   <div id="musicTop">
     <div id="musicIcon">🌻</div>
     <div id="musicInfo">
@@ -80,14 +80,34 @@
     }
   }
 
+  const player = document.getElementById('musicPlayer');
+  let collapseTimer;
+
+  function expandPlayer() {
+    player.classList.add('expanded');
+    clearTimeout(collapseTimer);
+    collapseTimer = setTimeout(() => {
+      if (!audio.paused) player.classList.remove('expanded');
+    }, 4200);
+  }
+
+  player.addEventListener('click', (e) => {
+    if (e.target.closest('#musicPlay') || e.target.closest('#musicProgress')) return;
+    if (!player.classList.contains('expanded')) expandPlayer();
+  });
+
   play.addEventListener('click', async (e) => {
     e.stopPropagation();
     if (audio.paused) {
       await startMusic();
+      expandPlayer();
     } else {
       audio.pause();
+      player.classList.remove('expanded');
     }
   });
+
+  progress.addEventListener('click', () => expandPlayer());
 
   // Attempt autoplay. Desktop browsers may allow this; mobile browsers
   // generally require a user gesture, handled by the listeners below.
@@ -96,14 +116,15 @@
   // The first tap/click anywhere on the page starts audio if autoplay was blocked.
   const unlock = () => {
     if (audio.paused) startMusic();
+    expandPlayer();
     window.removeEventListener('pointerdown', unlock);
     window.removeEventListener('touchstart', unlock);
   };
   window.addEventListener('pointerdown', unlock, {passive:true});
   window.addEventListener('touchstart', unlock, {passive:true});
 
-  audio.addEventListener('play', () => play.textContent = '❚❚');
-  audio.addEventListener('pause', () => play.textContent = '▶');
+  audio.addEventListener('play', () => { play.textContent = '❚❚'; player.classList.add('playing'); });
+  audio.addEventListener('pause', () => { play.textContent = '▶'; player.classList.remove('playing'); });
   audio.addEventListener('loadedmetadata', () => duration.textContent = fmt(audio.duration));
   audio.addEventListener('timeupdate', () => {
     progress.value = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;

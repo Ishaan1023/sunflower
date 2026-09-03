@@ -4,140 +4,116 @@
 <meta charset="utf-8">
 <title>Sunflowers</title>
 <style>
-  html,body{margin:0;height:100%;background:#000;overflow:hidden}
-  body{display:flex;align-items:center;justify-content:center}
-  canvas{display:block;max-width:100vmin;max-height:100vmin}
+  html,body{margin:0;width:100%;height:100%;background:#000;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;position:relative}
+  canvas{display:block;width:min(92vw,92vh,800px);height:min(92vw,92vh,800px);max-width:none;max-height:none}
+  #musicPlayer{
+    position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));
+    transform:translateX(-50%);width:min(390px,calc(100vw - 28px));z-index:100;
+    padding:11px 13px 10px;border:1px solid rgba(255,255,255,.16);
+    border-radius:18px;background:rgba(15,15,15,.78);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+    box-sizing:border-box;box-shadow:0 10px 40px rgba(0,0,0,.45);
+  }
+  #musicTop{display:flex;align-items:center;gap:10px}
+  #musicIcon{width:30px;height:30px;display:grid;place-items:center;font-size:22px;flex:none}
+  #musicInfo{flex:1;min-width:0}
+  #musicTitle{font-size:13px;font-weight:650;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #musicArtist{font-size:10px;opacity:.58;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #musicPlay{
+    width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#111;
+    font-size:14px;cursor:pointer;display:grid;place-items:center;flex:none;
+  }
+  #musicProgress{display:block;width:100%;height:18px;margin:6px 0 0;accent-color:#fff}
+  #musicTime{display:flex;justify-content:space-between;font-size:9px;opacity:.48;margin-top:-1px}
+  @media (max-width:600px){
+    canvas{width:92vw;height:92vw}
+    #musicPlayer{bottom:max(12px,env(safe-area-inset-bottom));width:calc(100vw - 24px);padding:10px 11px 8px;border-radius:16px}
+    #musicPlay{width:42px;height:42px}
+    #musicProgress{margin-top:4px}
+  }
+  @media (max-height:700px) and (orientation:landscape){
+    canvas{width:72vh;height:72vh}
+    #musicPlayer{width:330px;bottom:10px}
+  }
 </style>
 </head>
 <body>
 <canvas id="c" width="800" height="800"></canvas>
 
-<style>
-  #musicPlayer{
-    position:fixed;
-    top:18px;
-    right:18px;
-    z-index:1000;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
-    color:#fff;
-  }
-  #musicToggle{
-    width:46px;height:46px;border:1px solid rgba(255,255,255,.18);
-    border-radius:50%;background:rgba(0,0,0,.72);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    color:#fff;display:grid;place-items:center;cursor:pointer;
-    box-shadow:0 8px 25px rgba(0,0,0,.35);
-    font-size:18px;
-  }
-  #musicCard{
-    display:none;
-    width:min(290px,calc(100vw - 36px));
-    margin-top:8px;padding:12px 13px;
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:17px;background:rgba(10,10,10,.84);
-    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-    box-shadow:0 12px 40px rgba(0,0,0,.45);
-    box-sizing:border-box;
-  }
-  #musicCard.open{display:block}
-  #musicRow{display:flex;align-items:center;gap:10px}
-  #musicArt{font-size:22px}
-  #musicInfo{flex:1;min-width:0}
-  #musicTitle{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #musicArtist{font-size:10px;opacity:.58;margin-top:2px}
-  #musicPlay{
-    width:34px;height:34px;border:0;border-radius:50%;
-    background:#fff;color:#111;cursor:pointer;font-size:13px;
-  }
-  #musicProgress{width:100%;margin-top:9px;accent-color:#fff;cursor:pointer}
-  #musicTimes{display:flex;justify-content:space-between;font-size:9px;opacity:.48;margin-top:-2px}
-  #musicHint{
-    font-size:9px;opacity:.45;text-align:center;margin-top:7px;
-  }
-</style>
-
-<div id="musicPlayer">
-  <button id="musicToggle" aria-label="Open music player" title="Music">🌻</button>
-  <div id="musicCard">
-    <div id="musicRow">
-      <div id="musicArt">🌻</div>
-      <div id="musicInfo">
-        <div id="musicTitle">Sunflower</div>
-        <div id="musicArtist">Post Malone &amp; Swae Lee</div>
-      </div>
-      <button id="musicPlay" aria-label="Play">▶</button>
+<div id="musicPlayer" aria-label="Sunflower music player">
+  <div id="musicTop">
+    <div id="musicIcon">🌻</div>
+    <div id="musicInfo">
+      <div id="musicTitle">Sunflower</div>
+      <div id="musicArtist">Post Malone &amp; Swae Lee</div>
     </div>
-    <input id="musicProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Song progress">
-    <div id="musicTimes"><span id="musicCurrent">0:00</span><span id="musicDuration">0:00</span></div>
-    <div id="musicHint">Tap ▶ to play</div>
-    <audio id="sunflowerAudio" preload="auto" playsinline>
-      <source src="./music/sunflower.mp3" type="audio/mpeg">
-    </audio>
+    <button id="musicPlay" aria-label="Play music">▶</button>
   </div>
+  <input id="musicProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Song progress">
+  <div id="musicTime"><span id="musicCurrent">0:00</span><span id="musicDuration">0:00</span></div>
+  <audio id="sunflowerAudio" preload="auto" loop playsinline>
+    <source src="./music/sunflower.mp3" type="audio/mpeg">
+  </audio>
 </div>
 
 <script>
 (() => {
   const audio = document.getElementById('sunflowerAudio');
-  const toggle = document.getElementById('musicToggle');
-  const card = document.getElementById('musicCard');
   const play = document.getElementById('musicPlay');
   const progress = document.getElementById('musicProgress');
   const current = document.getElementById('musicCurrent');
   const duration = document.getElementById('musicDuration');
-  const hint = document.getElementById('musicHint');
 
-  const fmt = (s) => {
+  const fmt = s => {
     if (!Number.isFinite(s)) return '0:00';
     s = Math.floor(s);
-    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
   };
 
-  toggle.addEventListener('click', () => {
-    card.classList.toggle('open');
-    toggle.textContent = card.classList.contains('open') ? '×' : '🌻';
-  });
-
-  play.addEventListener('click', async () => {
+  async function startMusic() {
     try {
-      if (audio.paused) {
-        await audio.play(); // user gesture: allowed by desktop/mobile browsers
-      } else {
-        audio.pause();
-      }
-    } catch (err) {
-      hint.textContent = 'Audio could not load';
-      console.error('Sunflower audio error:', err);
+      await audio.play();
+    } catch (e) {
+      // Browser autoplay policy may require the first user interaction.
+    }
+  }
+
+  play.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if (audio.paused) {
+      await startMusic();
+    } else {
+      audio.pause();
     }
   });
 
-  audio.addEventListener('loadedmetadata', () => {
-    duration.textContent = fmt(audio.duration);
-  });
-  audio.addEventListener('loadeddata', () => {
-    hint.textContent = 'Ready to play';
-  });
-  audio.addEventListener('canplay', () => {
-    if (audio.duration) duration.textContent = fmt(audio.duration);
-  });
-  audio.addEventListener('error', () => {
-    hint.textContent = 'Audio file unavailable';
-    console.error('Audio element error:', audio.error);
-  });
-  audio.addEventListener('play', () => {
-    play.textContent = '❚❚';
-    hint.textContent = 'Playing';
-  });
-  audio.addEventListener('pause', () => {
-    play.textContent = '▶';
-    hint.textContent = 'Paused';
-  });
+  // Attempt autoplay. Desktop browsers may allow this; mobile browsers
+  // generally require a user gesture, handled by the listeners below.
+  startMusic();
+
+  // The first tap/click anywhere on the page starts audio if autoplay was blocked.
+  const unlock = () => {
+    if (audio.paused) startMusic();
+    window.removeEventListener('pointerdown', unlock);
+    window.removeEventListener('touchstart', unlock);
+  };
+  window.addEventListener('pointerdown', unlock, {passive:true});
+  window.addEventListener('touchstart', unlock, {passive:true});
+
+  audio.addEventListener('play', () => play.textContent = '❚❚');
+  audio.addEventListener('pause', () => play.textContent = '▶');
+  audio.addEventListener('loadedmetadata', () => duration.textContent = fmt(audio.duration));
   audio.addEventListener('timeupdate', () => {
-    if (audio.duration) progress.value = (audio.currentTime / audio.duration) * 100;
+    progress.value = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;
     current.textContent = fmt(audio.currentTime);
   });
+  audio.addEventListener('error', () => {
+    document.getElementById('musicTitle').textContent = 'Sunflower · audio unavailable';
+  });
   progress.addEventListener('input', () => {
-    if (audio.duration) audio.currentTime = (progress.value / 100) * audio.duration;
+    if (audio.duration) audio.currentTime = (progress.value/100)*audio.duration;
   });
 })();
 </script>
